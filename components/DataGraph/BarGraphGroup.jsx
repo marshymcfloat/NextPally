@@ -2,13 +2,17 @@ import BankBarGraph from "./BankBarGraph";
 import CashBarGraph from "./CashBarGraph";
 import EWalletBarGraph from "./EWalletBarGraph";
 
-export default function BarGraphGroup() {
+export default function BarGraphGroup({ data }) {
+  const cash = data * 0.25;
+  const bank = data * 0.25;
+  const ewallet = data * 0.5;
+
   return (
-    <div className="h-[250px] flex items-end">
+    <div className="h-[250px] flex items-end relative ">
       <div className="h-[220px]  flex flex-col justify-end mb-[-5px]">
-        <CashBarGraph amount={120000} />
-        <BankBarGraph amount={14000} />
-        <EWalletBarGraph amount={26000} />
+        <CashBarGraph amount={cash} />
+        <BankBarGraph amount={bank} />
+        <EWalletBarGraph amount={ewallet} />
       </div>
     </div>
   );
