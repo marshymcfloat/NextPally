@@ -1,38 +1,21 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import NavLink from "./NavLink";
 
 export default function NavBar() {
+  const path = usePathname();
+
   return (
-    <nav className="w-[20%]">
-      <ul className="flex  justify-evenly text-xl  font-medium cursor-pointer">
+    <nav className="h-[60px] w-[30%] rounded-bl-full bg-customGreen01">
+      <ul className="text-md flex h-full items-center justify-evenly font-medium text-customBGColor">
         <li>
-          <div className=" w-20 text-center">
-            <Link
-              href="/"
-              className="hover:text-customGreen02 hover:font-bold hover:tracking-widest transition-all duration-150"
-            >
-              HOME
-            </Link>
-          </div>
+          <NavLink href="/">HOME</NavLink>
         </li>
         <li>
-          <div className=" w-20 text-center">
-            <Link
-              href="/rate"
-              className="hover:text-customGreen02 hover:font-black hover:tracking-widest transition-all duration-150"
-            >
-              RATE
-            </Link>
-          </div>
+          <NavLink href="/rate">RATE</NavLink>
         </li>
         <li>
-          <div className=" w-20 text-center">
-            <Link
-              href="/login"
-              className="hover:text-customGreen02 hover:font-bold hover:tracking-widest transition-all duration-150"
-            >
-              LOGIN
-            </Link>
-          </div>
+          <NavLink href="/login">LOGIN</NavLink>
         </li>
       </ul>
     </nav>

@@ -3,7 +3,7 @@ export default function BankBarGraph({ amount }) {
 
   return (
     <div
-      className="bg-customBankGreen w-14"
+      className="bg-customBankGreen   "
       style={{ height: `${percentage}%` }}
     ></div>
   );

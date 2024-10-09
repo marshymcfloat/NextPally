@@ -32,13 +32,7 @@ export default function GraphGroup({ title, data }) {
           {monthTotals.map((month) => (
             <BarGraphGroup key={month.month} data={month.totalAmount} />
           ))}
-          {/*  <BarGraphGroup />
-          <BarGraphGroup />
-          <BarGraphGroup />
-          <BarGraphGroup />
-          <BarGraphGroup />
-
-          <BarGraphGroup /> */}
+          
         </GraphContainer>
       </div>
       <GraphBottomLabel label={uniqueMonths} />

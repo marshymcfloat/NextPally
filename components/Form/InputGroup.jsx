@@ -1,10 +1,10 @@
 "use client";
 export default function InputGroup({ label, type = "text" }) {
   return (
-    <div className="flex flex-col my-4 w-[80%] mx-auto">
+    <div className="mx-auto my-4 flex w-[80%] flex-col">
       <label
         htmlFor={label}
-        className="mb-4 uppercase tracking-widest font-bold"
+        className="text-lg font-bold lowercase tracking-widest text-customGreen01"
       >
         {label}:
       </label>
@@ -12,7 +12,7 @@ export default function InputGroup({ label, type = "text" }) {
         type={type}
         id={label}
         name={label}
-        className="h-10 px-2 py-2 border border-black font-semibold text-lg rounded-md"
+        className="h-14 rounded-md border-[3px] border-customGreen01 bg-customBGColor px-2 py-2 text-lg font-semibold"
       />
     </div>
   );

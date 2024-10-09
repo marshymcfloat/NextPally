@@ -8,9 +8,9 @@ export default function BarGraphGroup({ data }) {
   const ewallet = data * 0.5;
 
   return (
-    <div className="h-[250px] flex items-end relative ">
+    <div className="h-[250px] flex items-end  ">
       <div className="h-[220px]  flex flex-col justify-end mb-[-5px]">
-        <CashBarGraph amount={cash} />
+        <CashBarGraph amount={cash} totalAmount= {data} />
         <BankBarGraph amount={bank} />
         <EWalletBarGraph amount={ewallet} />
       </div>
