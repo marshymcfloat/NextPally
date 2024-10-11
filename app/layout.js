@@ -1,5 +1,4 @@
 import "@/app/globals.css";
-
 import MainHeader from "@/components/MainHeader/MainHeader";
 
 export default function RootLayout({ children }) {
