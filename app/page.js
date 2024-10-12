@@ -227,7 +227,7 @@ export default function Home() {
         <div className="ml-16 w-[80%]">
           <h1 className="w-[80%] text-6xl font-bold">
             <span className="text-customGreen01">Track</span>,
-            <span className="text-customGreen01">Manage</span>, and
+            <span className="text-customGreen01"> Manage</span>, and
             <span className="text-customGreen01"> Grow</span> your Business with
             <span className="text-customGreen01"> Precision.</span>
           </h1>
