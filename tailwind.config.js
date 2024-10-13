@@ -13,6 +13,7 @@ module.exports = {
         customBankGreen: "#9dd28a",
         customCashGreen: "#c5ffb0",
         customBGGraph: "#0a1c02",
+        customDarkerGreen: "#062d20",
       },
     },
   },
