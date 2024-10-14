@@ -12,7 +12,7 @@ export default function SideBar({ title }) {
   return (
     <>
       <div
-        className={`absolute bottom-[-5px] left-[-10px] h-screen w-[20%] transform rounded-tr-2xl border-[5px] border-customGreen01 bg-customBGColor bg-opacity-5 px-4 backdrop-blur-md transition-transform duration-300 ${
+        className={`absolute bottom-[-10px] left-[-10px] h-screen w-[20%] min-w-[300px] transform rounded-tr-2xl border-[5px] border-customGreen01 bg-customBGColor bg-opacity-5 px-4 backdrop-blur-md transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         id="slider-button"

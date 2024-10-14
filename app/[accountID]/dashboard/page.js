@@ -221,6 +221,8 @@ import { useQuery } from "@tanstack/react-query";
 import Spinner from "@/components/Indicators/Spinner";
 import ErrorIndicator from "@/components/Indicators/Error";
 import OwnerDashboard from "@/components/Dashboard/Owner/OwnerDashboard";
+import CashierDashBoard from "@/components/Dashboard/Cashier/CashierDashboard";
+import WorkerDashboard from "@/components/Dashboard/Worker/WorkerDashboard";
 
 export default function Dashboard({ params }) {
   const { accountID } = params;
@@ -243,8 +245,12 @@ export default function Dashboard({ params }) {
     content = <ErrorIndicator message={error.message} />;
   } else if (data?.role === "owner") {
     content = <OwnerDashboard id={accountID} sales={sales} />;
+  } else if (data?.role === "cashier") {
+    content = <CashierDashBoard />;
+  } else if (data?.role === "worker") {
+    content = <WorkerDashboard />;
   } else {
-    content = <h1>Role not recognized.</h1>; // Handle other roles or cases
+    content = <h1>not recognized.</h1>;
   }
 
   return <main className="flex h-screen">{content}</main>;

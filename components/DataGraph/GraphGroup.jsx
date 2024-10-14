@@ -20,11 +20,11 @@ export default function GraphGroup({ title, data }) {
   console.log(monthTotals);
 
   return (
-    <div className="rounded-xl px-4 py-6   inline-block">
-      <h1 className="text-center text-4xl font-bold mb-4 text-customGreen01 ml-28">
+    <div className="inline-block rounded-xl px-4 py-6">
+      <h1 className="mb-4 ml-28 text-center text-4xl font-bold text-customGreen01">
         {title}
       </h1>
-      <div className="flex ">
+      <div className="flex">
         <GraphSideLabel
           label={["250,000", "200,000", "150,000", "100,000", "50,000"]}
         />
@@ -32,7 +32,6 @@ export default function GraphGroup({ title, data }) {
           {monthTotals.map((month) => (
             <BarGraphGroup key={month.month} data={month.totalAmount} />
           ))}
-          
         </GraphContainer>
       </div>
       <GraphBottomLabel label={uniqueMonths} />

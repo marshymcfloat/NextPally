@@ -6,17 +6,17 @@ import moneyimage from "@/public/images/moneyimage.png";
 
 export default function Home() {
   return (
-    <main className="flex h-screen">
+    <main className="flex h-screen flex-col md:flex-row">
       <div className="flex flex-1 items-center justify-center">
-        <div className="ml-16 w-[80%]">
-          <h1 className="w-[80%] text-6xl font-bold">
+        <div className="flex h-screen w-[80%] flex-col items-center justify-center md:ml-16 md:w-[80%]">
+          <h1 className="text-center text-4xl font-bold md:w-[80%] md:text-start md:text-6xl">
             <span className="text-customGreen01">Track</span>,
             <span className="text-customGreen01"> Manage</span>, and
             <span className="text-customGreen01"> Grow</span> your Business with
             <span className="text-customGreen01"> Precision.</span>
           </h1>
-          <div className="mt-4 flex w-[40%]">
-            <div className="mr-8">
+          <div className="mt-4 flex w-[100%] justify-evenly md:ml-20 md:mr-auto md:w-[30%] md:justify-between">
+            <div className="">
               <Button invert={true}>
                 <Link href="/rates">See Rates</Link>
               </Button>
@@ -30,7 +30,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-[60%]">
+        <div className="w-[300px] md:w-[700px]">
           <img src="/images/moneyimage.png" />
         </div>
       </div>
