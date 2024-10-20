@@ -223,12 +223,13 @@ import ErrorIndicator from "@/components/Indicators/Error";
 import OwnerDashboard from "@/components/Dashboard/Owner/OwnerDashboard";
 import CashierDashBoard from "@/components/Dashboard/Cashier/CashierDashboard";
 import WorkerDashboard from "@/components/Dashboard/Worker/WorkerDashboard";
+import AddTransaction from "@/components/Dashboard/Cashier/AddTransaction";
 
 export default function Dashboard({ params }) {
   const { accountID } = params;
 
   const { data, error, isError, isLoading } = useQuery({
-    queryKey: ["role", accountID],
+    queryKey: ["dashboard", accountID],
     queryFn: async () => {
       const response = await fetch(`/api/${accountID}/dashboard`);
       if (!response.ok) {
@@ -243,14 +244,14 @@ export default function Dashboard({ params }) {
     content = <Spinner />;
   } else if (isError) {
     content = <ErrorIndicator message={error.message} />;
-  } else if (data?.role === "owner") {
-    content = <OwnerDashboard id={accountID} sales={sales} />;
-  } else if (data?.role === "cashier") {
-    content = <CashierDashBoard />;
-  } else if (data?.role === "worker") {
+  } else if (data?.role.title === "owner") {
+    content = <OwnerDashboard />;
+  } else if (data?.role.title === "cashier") {
+    content = <AddTransaction />;
+  } else if (data?.role.title === "worker") {
     content = <WorkerDashboard />;
   } else {
-    content = <h1>not recognized.</h1>;
+    content = <h1>Role not recognized.</h1>;
   }
 
   return <main className="flex h-screen">{content}</main>;

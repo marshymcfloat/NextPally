@@ -1,10 +1,15 @@
-import Account from "@/lib/models/Account"; // Your Account model
-import Role from "@/lib/models/Role"; // Import the Role model
+import Account from "@/lib/models/Account";
+import Role from "@/lib/models/Role";
+import Business from "@/lib/models/Business";
+import Branch from "@/lib/models/Branch";
+import Service from "@/lib/models/Service";
 
 export async function GET(req, { params }) {
   const { accountID } = params;
 
-  const foundAcc = await Account.findById(accountID).populate("role");
+  const foundAcc = await Account.findById(accountID)
+    .populate("role")
+    .populate("businessID");
 
   if (!foundAcc) {
     return new Response(JSON.stringify({ message: "Account not found." }), {
@@ -12,7 +17,8 @@ export async function GET(req, { params }) {
     });
   }
 
-  const roleTitle = foundAcc.role ? foundAcc.role.title : null;
-
-  return new Response(JSON.stringify({ role: roleTitle }));
+  console.log(foundAcc.role);
+  return new Response(JSON.stringify({ role: foundAcc.role }), {
+    status: 200,
+  });
 }

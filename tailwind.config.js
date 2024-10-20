@@ -15,6 +15,10 @@ module.exports = {
         customBGGraph: "#0a1c02",
         customDarkerGreen: "#062d20",
       },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"], // Optional: Set Inter as default sans font
+        inter: ["Inter", "sans-serif"], // Custom class for Inter
+      },
     },
   },
   plugins: [],
