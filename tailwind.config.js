@@ -14,6 +14,7 @@ module.exports = {
         customCashGreen: "#c5ffb0",
         customBGGraph: "#0a1c02",
         customDarkerGreen: "#062d20",
+        customBGlightGreen: "#bfd0cb",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"], // Optional: Set Inter as default sans font
