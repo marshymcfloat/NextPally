@@ -247,7 +247,7 @@ export default function Dashboard({ params }) {
   } else if (data?.role.title === "owner") {
     content = <OwnerDashboard />;
   } else if (data?.role.title === "cashier") {
-    content = <AddTransaction />;
+    content = <CashierDashBoard services={data.services} />;
   } else if (data?.role.title === "worker") {
     content = <WorkerDashboard />;
   } else {

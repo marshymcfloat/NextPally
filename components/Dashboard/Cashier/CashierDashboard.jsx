@@ -5,8 +5,22 @@ import SideBar from "../SideBar/SideBar";
 import InputGroup from "@/components/Form/InputGroup";
 import SelectGroup from "@/components/Form/SelectGroup";
 import { useState } from "react";
+import AddTransaction from "./AddTransaction";
 
-export default function CashierDashBoard() {
+export default function CashierDashBoard({ services }) {
+  const availableServices = services.flat();
+
+  console.log(availableServices);
+  const [transactionDetails, setTransactionDetails] = useState({
+    customerName: "",
+    streak: "",
+    brach: "",
+    services: [],
+    voucher: "",
+    payment: "",
+    total: "",
+  });
+
   const [list, setList] = useState([
     {
       id: "bf01",
@@ -24,6 +38,11 @@ export default function CashierDashBoard() {
     },
   ]);
 
+  const [dialogVisibility, setDialogVisibility] = useState(false);
+
+  function handleDialogVisibility() {
+    setDialogVisibility((prevState) => !prevState);
+  }
   return (
     <>
       <SideBar />
@@ -94,12 +113,22 @@ export default function CashierDashBoard() {
             </div>
           </div>
           <div className="flex h-[10%] items-center justify-end">
-            <button className="rounded-md border border-customGreen01 bg-customGreen01 px-4 py-2 uppercase text-customBGColor">
+            <button
+              className="rounded-md border border-customGreen01 bg-customGreen01 px-4 py-2 uppercase text-customBGColor"
+              onClick={handleDialogVisibility}
+            >
               new transaction
             </button>
           </div>
         </div>
       </main>
+      {dialogVisibility && (
+        <AddTransaction
+          visibility={handleDialogVisibility}
+          transactionDetails={transactionDetails}
+          setDetails={setTransactionDetails}
+        />
+      )}
     </>
   );
 }

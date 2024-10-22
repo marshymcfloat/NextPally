@@ -17,8 +17,22 @@ export async function GET(req, { params }) {
     });
   }
 
-  console.log(foundAcc.role);
-  return new Response(JSON.stringify({ role: foundAcc.role }), {
+  console.log(foundAcc);
+  let data = { role: foundAcc.role.title };
+
+  if (foundAcc.role.title === "cashier") {
+    const branches = await Branch.find({
+      businessID: foundAcc.businessID._id,
+    });
+
+    const services = await Promise.all(
+      branches.map((branch) => Service.find({ branchID: branch._id })),
+    );
+
+    data = { role: foundAcc.role, branches, services };
+  }
+
+  return new Response(JSON.stringify(data), {
     status: 200,
   });
 }
