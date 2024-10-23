@@ -2,15 +2,14 @@
 
 import BlockInfo from "@/components/DataGraph/BlockInfo";
 import SideBar from "../SideBar/SideBar";
-import InputGroup from "@/components/Form/InputGroup";
-import SelectGroup from "@/components/Form/SelectGroup";
 import { useState } from "react";
 import AddTransaction from "./AddTransaction";
 
-export default function CashierDashBoard({ services }) {
+export default function CashierDashBoard({ services, branches, methods }) {
   const availableServices = services.flat();
+  const availableBranches = branches;
+  const availableMethods = methods;
 
-  console.log(availableServices);
   const [transactionDetails, setTransactionDetails] = useState({
     customerName: "",
     streak: "",
@@ -127,6 +126,9 @@ export default function CashierDashBoard({ services }) {
           visibility={handleDialogVisibility}
           transactionDetails={transactionDetails}
           setDetails={setTransactionDetails}
+          branches={availableBranches}
+          services={availableServices}
+          methods={availableMethods}
         />
       )}
     </>

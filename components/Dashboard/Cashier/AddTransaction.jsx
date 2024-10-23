@@ -5,39 +5,27 @@ import CashierSelectInput from "./cashierSelectInput";
 import CustomerStreak from "./CustomerStreak";
 import SelectedServices from "./SelectedServices";
 import Button from "@/components/Form/Button";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+
+import { getCustomerSuggestions } from "@/lib/actions";
 
 export default function AddTransaction({
   visibility,
   transactionDetails,
   setDetails,
+  branches,
+  services,
+  methods,
 }) {
   const dialogRef = useRef();
+  const [availableServices, setAvailableServices] = useState([]);
 
   function dialogClose() {
     visibility();
     dialogRef.current.close();
   }
 
-  const branches = [
-    { id: "bf01", name: "bfo1" },
-    { id: "bf02", name: "bf02" },
-    { id: "bf03", name: "bf03" },
-  ];
-
-  const services = [
-    { name: "manicure pedicure", id: "mp01" },
-    { name: "massage 101", id: "msg01" },
-    { name: "massage 102", id: "msg02" },
-  ];
-
-  const paymentModes = [
-    { name: "Gcash", id: "pmd01" },
-    { name: "Bank", id: "pm02" },
-    { name: "Cash", id: "pm03" },
-  ];
-
-  function handleTransactionDetailsChanges(event) {
+  /*   function handleTransactionDetailsChanges(event) {
     const { name, value } = event.target;
 
     console.log(transactionDetails);
@@ -45,6 +33,19 @@ export default function AddTransaction({
       ...prevState,
       [name]: value,
     }));
+  } */
+
+  function branchHandleChange(event) {
+    const selectedBranchID = event.target.value;
+    const foundServices = services.filter(
+      (service) => service.branchID === selectedBranchID,
+    );
+
+    setAvailableServices(foundServices);
+  }
+
+  function handleCustomerSearch(event) {
+    getCustomerSuggestions(event.target.value);
   }
 
   return (
@@ -63,33 +64,101 @@ export default function AddTransaction({
         <h1 className="text-center text-2xl tracking-widest">BeautyFeel</h1>
 
         <form action="" className="h-[95%]">
-          <div className="my-4 flex flex-col">
-            <label htmlFor="customerName">Customer Name</label>
+          <div className="flex flex-col">
+            <label
+              htmlFor="customername"
+              className="lowercase text-customGreen01"
+            >
+              Customer name
+            </label>
             <input
               type="text"
-              name="customerName"
-              className="h-[40px] rounded-md border-[2px] border-customGreen01 px-2"
-              value={transactionDetails.customerName}
-              onChange={handleTransactionDetailsChanges}
+              id="customername"
+              name="customername"
+              className="h-12 rounded-md border-[3px] border-customGreen01 px-2"
             />
           </div>
+
           <CustomerStreak />
-          <div className="flex justify-around">
-            <CashierSelectInput label="branches" options={branches} />
-            <CashierSelectInput label="services" options={services} />
-          </div>
-          <div className="flex justify-around">
-            <div className="mx-4 flex flex-col">
-              <label htmlFor="">voucher</label>
-              <input
-                type="text"
-                className="w-[100px] border-[2px] border-customGreen01 px-2"
-              />
+
+          <div className="my-2 flex justify-evenly">
+            <div className="w-[30%]">
+              <div className="flex flex-col">
+                <label htmlFor="branch" className="text-customGreen01">
+                  branch
+                </label>
+                <select
+                  className="max-w-[100px] overflow-hidden truncate rounded-md border-[3px] border-customGreen01 px-1 py-1"
+                  name="branch"
+                  id="branch"
+                  onChange={branchHandleChange}
+                >
+                  <option value="">select branch</option>
+                  {branches.map((branch) => (
+                    <option value={branch._id} key={branch._id} id={branch._id}>
+                      {branch.branchName}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <CashierSelectInput
-              label={"mode of payment"}
-              options={paymentModes}
-            />
+            <div className="w-[60%]">
+              <div className="flex flex-col">
+                <label htmlFor="services" className="text-customGreen01">
+                  Services
+                </label>
+                <div className="overflow-y-scroll truncate rounded-md border-[3px] border-customGreen01 px-1 py-1">
+                  {availableServices.map((service) => (
+                    <div key={service._id} className="">
+                      <input
+                        value={service.name}
+                        id={service._id}
+                        name="services"
+                        type="checkbox"
+                        className="hidden"
+                      />
+                      <label htmlFor={service._id}>{service.name}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-evenly">
+            <div className="w-[30%]">
+              <div className="flex flex-col">
+                <label htmlFor="" className="text-customGreen01">
+                  voucher
+                </label>
+                <input
+                  type="text"
+                  className="max-w-[100px] rounded-md border-[3px] border-customGreen01 px-2 py-1"
+                />
+              </div>
+            </div>
+            <div className="w-[60%]">
+              <div className="flex flex-col">
+                <label htmlFor="branch" className="text-customGreen01">
+                  payment methods
+                </label>
+                <select
+                  className="max-w-[100px] overflow-hidden truncate rounded-md border-[3px] border-customGreen01 px-1 py-1"
+                  name="branch"
+                  id="branch"
+                >
+                  <option value="">select method</option>
+                  {methods.map((method) => (
+                    <option
+                      value={method.paymentName}
+                      key={method._id}
+                      id={method._id}
+                    >
+                      {method.paymentName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
           <div className="max-h-[40%] min-h-[40%] overflow-y-auto">

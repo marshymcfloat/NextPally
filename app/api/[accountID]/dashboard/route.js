@@ -3,6 +3,7 @@ import Role from "@/lib/models/Role";
 import Business from "@/lib/models/Business";
 import Branch from "@/lib/models/Branch";
 import Service from "@/lib/models/Service";
+import PaymentMethod from "@/lib/models/PaymentMethod";
 
 export async function GET(req, { params }) {
   const { accountID } = params;
@@ -29,7 +30,10 @@ export async function GET(req, { params }) {
       branches.map((branch) => Service.find({ branchID: branch._id })),
     );
 
-    data = { role: foundAcc.role, branches, services };
+    const methods = await PaymentMethod.find({});
+
+    console.log(methods);
+    data = { role: foundAcc.role, branches, services, methods };
   }
 
   return new Response(JSON.stringify(data), {

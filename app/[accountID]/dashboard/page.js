@@ -223,7 +223,6 @@ import ErrorIndicator from "@/components/Indicators/Error";
 import OwnerDashboard from "@/components/Dashboard/Owner/OwnerDashboard";
 import CashierDashBoard from "@/components/Dashboard/Cashier/CashierDashboard";
 import WorkerDashboard from "@/components/Dashboard/Worker/WorkerDashboard";
-import AddTransaction from "@/components/Dashboard/Cashier/AddTransaction";
 
 export default function Dashboard({ params }) {
   const { accountID } = params;
@@ -247,7 +246,13 @@ export default function Dashboard({ params }) {
   } else if (data?.role.title === "owner") {
     content = <OwnerDashboard />;
   } else if (data?.role.title === "cashier") {
-    content = <CashierDashBoard services={data.services} />;
+    content = (
+      <CashierDashBoard
+        services={data.services}
+        branches={data.branches}
+        methods={data.methods}
+      />
+    );
   } else if (data?.role.title === "worker") {
     content = <WorkerDashboard />;
   } else {
