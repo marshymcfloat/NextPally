@@ -1,11 +1,11 @@
 "use client";
 
-import DashboardInputGroup from "../DashboardInputGroup";
-import CashierSelectInput from "./cashierSelectInput";
 import CustomerStreak from "./CustomerStreak";
 import SelectedServices from "./SelectedServices";
 import Button from "@/components/Form/Button";
 import { useRef, useState } from "react";
+import ServiceDropDown from "./ServiceDropDown";
+import CustomerSearchInput from "./CustomerSearchInput";
 
 import { getCustomerSuggestions } from "@/lib/actions";
 
@@ -25,22 +25,24 @@ export default function AddTransaction({
     dialogRef.current.close();
   }
 
-  /*   function handleTransactionDetailsChanges(event) {
+  function handleTransactionDetailsChanges(event) {
     const { name, value } = event.target;
 
-    console.log(transactionDetails);
     setDetails((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-  } */
+  }
 
   function branchHandleChange(event) {
-    const selectedBranchID = event.target.value;
+    const { name, id, value } = event.target;
     const foundServices = services.filter(
-      (service) => service.branchID === selectedBranchID,
+      (service) => service.branchID === value,
     );
-
+    setDetails((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
     setAvailableServices(foundServices);
   }
 
@@ -64,20 +66,7 @@ export default function AddTransaction({
         <h1 className="text-center text-2xl tracking-widest">BeautyFeel</h1>
 
         <form action="" className="h-[95%]">
-          <div className="flex flex-col">
-            <label
-              htmlFor="customername"
-              className="lowercase text-customGreen01"
-            >
-              Customer name
-            </label>
-            <input
-              type="text"
-              id="customername"
-              name="customername"
-              className="h-12 rounded-md border-[3px] border-customGreen01 px-2"
-            />
-          </div>
+          <CustomerSearchInput onChange={handleTransactionDetailsChanges} />
 
           <CustomerStreak />
 
@@ -104,23 +93,10 @@ export default function AddTransaction({
             </div>
             <div className="w-[60%]">
               <div className="flex flex-col">
-                <label htmlFor="services" className="text-customGreen01">
-                  Services
+                <label htmlFor="" className="text-customGreen01">
+                  services
                 </label>
-                <div className="overflow-y-scroll truncate rounded-md border-[3px] border-customGreen01 px-1 py-1">
-                  {availableServices.map((service) => (
-                    <div key={service._id} className="">
-                      <input
-                        value={service.name}
-                        id={service._id}
-                        name="services"
-                        type="checkbox"
-                        className="hidden"
-                      />
-                      <label htmlFor={service._id}>{service.name}</label>
-                    </div>
-                  ))}
-                </div>
+                <ServiceDropDown services={availableServices} />
               </div>
             </div>
           </div>

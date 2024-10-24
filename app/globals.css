@@ -7,3 +7,22 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #fef9f3; /* same as bg-customBGColor */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #00563b; /* same as border-customGreen01 */
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #00563b; /* darker shade for hover effect */
+  }
+}
