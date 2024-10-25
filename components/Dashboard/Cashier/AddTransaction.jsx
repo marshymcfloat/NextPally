@@ -6,8 +6,10 @@ import Button from "@/components/Form/Button";
 import { useRef, useState } from "react";
 import ServiceDropDown from "./ServiceDropDown";
 import CustomerSearchInput from "./CustomerSearchInput";
+import CashierSelectInput from "./CashierSelectInput";
 
 import { getCustomerSuggestions } from "@/lib/actions";
+import CashierTextInput from "./CashierTextInput";
 
 export default function AddTransaction({
   visibility,
@@ -27,7 +29,7 @@ export default function AddTransaction({
 
   function handleTransactionDetailsChanges(event) {
     const { name, value } = event.target;
-
+    console.log(transactionDetails);
     setDetails((prevState) => ({
       ...prevState,
       [name]: value,
@@ -49,6 +51,11 @@ export default function AddTransaction({
   function handleCustomerSearch(event) {
     getCustomerSuggestions(event.target.value);
   }
+
+  const totalAmount = transactionDetails.services.reduce(
+    (acc, service) => acc + service.price * service.quantity,
+    0,
+  );
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -72,87 +79,57 @@ export default function AddTransaction({
 
           <div className="my-2 flex justify-evenly">
             <div className="w-[30%]">
-              <div className="flex flex-col">
-                <label htmlFor="branch" className="text-customGreen01">
-                  branch
-                </label>
-                <select
-                  className="max-w-[100px] overflow-hidden truncate rounded-md border-[3px] border-customGreen01 px-1 py-1"
-                  name="branch"
-                  id="branch"
-                  onChange={branchHandleChange}
-                >
-                  <option value="">select branch</option>
-                  {branches.map((branch) => (
-                    <option value={branch._id} key={branch._id} id={branch._id}>
-                      {branch.branchName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <CashierSelectInput
+                label={"branch"}
+                data={branches}
+                fn={branchHandleChange}
+              />
             </div>
             <div className="w-[60%]">
-              <div className="flex flex-col">
-                <label htmlFor="" className="text-customGreen01">
-                  services
-                </label>
-                <ServiceDropDown services={availableServices} />
-              </div>
+              <ServiceDropDown
+                services={availableServices}
+                transactionDetails={transactionDetails}
+                setDetails={setDetails}
+              />
             </div>
           </div>
           <div className="flex justify-evenly">
             <div className="w-[30%]">
-              <div className="flex flex-col">
-                <label htmlFor="" className="text-customGreen01">
-                  voucher
-                </label>
-                <input
-                  type="text"
-                  className="max-w-[100px] rounded-md border-[3px] border-customGreen01 px-2 py-1"
-                />
-              </div>
+              <CashierTextInput label={"voucher"} />
             </div>
             <div className="w-[60%]">
-              <div className="flex flex-col">
-                <label htmlFor="branch" className="text-customGreen01">
-                  payment methods
-                </label>
-                <select
-                  className="max-w-[100px] overflow-hidden truncate rounded-md border-[3px] border-customGreen01 px-1 py-1"
-                  name="branch"
-                  id="branch"
-                >
-                  <option value="">select method</option>
-                  {methods.map((method) => (
-                    <option
-                      value={method.paymentName}
-                      key={method._id}
-                      id={method._id}
-                    >
-                      {method.paymentName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <CashierSelectInput
+                label={"payment method"}
+                data={methods}
+                fn={handleTransactionDetailsChanges}
+              />
             </div>
           </div>
 
           <div className="max-h-[40%] min-h-[40%] overflow-y-auto">
             <p>availed</p>
             <div className="rounded-md bg-customBGlightGreen">
-              <SelectedServices
-                name="manicure pedicure 02"
-                branch={"bf01"}
-                value={399}
-                quantity={2}
-              />
+              {transactionDetails.services.length === 0 && (
+                <h1 className="py-4 text-center">Please select services</h1>
+              )}
+              {transactionDetails.services.length !== 0 &&
+                transactionDetails.services.map((service) => (
+                  <SelectedServices
+                    key={service.name}
+                    name={service.name}
+                    branch={"bf01"}
+                    value={service.price}
+                    quantity={service.quantity}
+                    setDetails={setDetails}
+                  />
+                ))}
             </div>
           </div>
 
           <div className="flex flex-col">
             <div className="flex justify-between">
               <p>sub total:</p>
-              <p>P1,297</p>
+              <p>P{totalAmount}</p>
             </div>
             <div className="flex justify-between">
               <p>discount</p>
@@ -160,7 +137,7 @@ export default function AddTransaction({
             </div>
             <div className="flex justify-between">
               <p>Total</p>
-              <p>P2,233</p>
+              <p>P{totalAmount}</p>
             </div>
           </div>
           <div className="mt-6 flex justify-evenly">
