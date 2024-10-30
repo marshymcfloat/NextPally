@@ -20,7 +20,7 @@ export default function SelectedServices({
               }
             : service,
         )
-        .filter((service) => service.quantity > 0); // Remove service if quantity is 0
+        .filter((service) => service.quantity > 0);
 
       return {
         ...prevState,
@@ -32,7 +32,9 @@ export default function SelectedServices({
   return (
     <div className="my-2 flex items-center justify-between px-2">
       <div className="flex w-[70%] items-center justify-between">
-        <p className="flex items-center">x{quantity}</p>
+        <p className="flex min-w-[25px] items-center md:min-w-[5%]">
+          x{quantity}
+        </p>
         <div className="flex flex-col justify-center">
           <p className="text-md w-[250px]">{name}</p>
           <div className="flex w-[50%] justify-between text-xs">
@@ -57,7 +59,7 @@ export default function SelectedServices({
             +
           </button>
         </div>
-        <p className="flex items-center">P{total}</p>
+        <p className="flex min-w-[60px] justify-center">P{total}</p>
       </div>
     </div>
   );

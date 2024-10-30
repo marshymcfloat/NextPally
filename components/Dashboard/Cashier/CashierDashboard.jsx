@@ -10,16 +10,6 @@ export default function CashierDashBoard({ services, branches, methods }) {
   const availableBranches = branches;
   const availableMethods = methods;
 
-  const [transactionDetails, setTransactionDetails] = useState({
-    customerName: "",
-    streak: "",
-    brach: "",
-    services: [],
-    voucher: "",
-    payment: "",
-    total: "",
-  });
-
   const [list, setList] = useState([
     {
       id: "bf01",
@@ -45,23 +35,25 @@ export default function CashierDashBoard({ services, branches, methods }) {
   return (
     <>
       <SideBar />
-      <main className="mx-4 my-4 h-[95%] w-screen rounded-xl border-[3px] border-customGreen01 px-2 py-2">
-        <div className="text-end">
-          <p className="text-sm tracking-wider text-customGreen01">
-            Hi, Ara...
-          </p>
-        </div>
-        <div id="userDataContainer" className="flex justify-evenly">
-          <BlockInfo
-            count={12}
-            description={"No. of transactions you did today."}
-          />
+      <main className="mx-auto my-auto h-[95%] w-screen rounded-xl border-[3px] border-customGreen01 px-2 py-2 md:mx-4">
+        <div className="h-[30%]">
+          <div className="text-end">
+            <p className="text-sm tracking-wider text-customGreen01">
+              Hi, Ara...
+            </p>
+          </div>
+          <div id="userDataContainer" className="flex justify-evenly">
+            <BlockInfo
+              count={12}
+              description={"No. of transactions you did today."}
+            />
 
-          <BlockInfo
-            count={6}
-            description={"No. of transactions that are  ongoing."}
-            invert={true}
-          />
+            <BlockInfo
+              count={6}
+              description={"No. of transactions that are  ongoing."}
+              invert={true}
+            />
+          </div>
         </div>
 
         <div id="transactionsContainer " className="h-[65%]">
@@ -124,8 +116,6 @@ export default function CashierDashBoard({ services, branches, methods }) {
       {dialogVisibility && (
         <AddTransaction
           visibility={handleDialogVisibility}
-          transactionDetails={transactionDetails}
-          setDetails={setTransactionDetails}
           branches={availableBranches}
           services={availableServices}
           methods={availableMethods}

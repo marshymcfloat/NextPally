@@ -1,55 +1,64 @@
 "use client";
 
-import { useState } from "react";
-
-export default function ServiceDropDown({
-  services,
-  transactionDetails,
-  setDetails,
-}) {
+import { useState, useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { transactionActions } from "@/components/Redux/TransactionSlice";
+export default function ServiceDropDown({ services }) {
   const [isArrowFlipped, setIsArrowFlipped] = useState(false);
+  const dispatch = useDispatch();
+  const dropdownRef = useRef(null);
+
+  const selectedServices = useSelector(
+    (state) => state.transaction.selectedServices,
+  );
+
+  console.log(services);
+
+  console.log(selectedServices);
 
   function handleFlippingArrow() {
     setIsArrowFlipped((prevState) => !prevState);
   }
 
-  function handleAddingServices(event) {
-    const serviceName = event.target.value;
-    const selectedService = services.find(
-      (service) => service.name === serviceName,
+  function handleAddingServices(event, price) {
+    dispatch(
+      transactionActions.modifyServices({
+        name: event.target.value,
+        quantity: 1,
+        price,
+      }),
     );
-    console.log(transactionDetails);
-    setDetails((prevDetails) => {
-      const serviceExists = prevDetails.services.some(
-        (s) => s.name === serviceName,
-      );
-
-      return {
-        ...prevDetails,
-        services: serviceExists
-          ? prevDetails.services.filter((s) => s.name !== serviceName)
-          : [
-              ...prevDetails.services,
-              {
-                name: selectedService.name,
-                price: selectedService.price,
-                quantity: 1,
-                total: selectedService.price,
-              },
-            ],
-      };
-    });
   }
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsArrowFlipped(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isArrowFlipped) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isArrowFlipped]);
 
   return (
     <div className="flex flex-col">
       <label htmlFor="" className="text-customGreen01">
         Services
       </label>
-      <div className="relative flex h-[36px] w-[200px] rounded-md border-[3px] border-customGreen01">
+      <div
+        className="relative flex h-[36px] w-[200px] rounded-md border-[3px] border-customGreen01"
+        ref={dropdownRef}
+      >
         <div className="flex w-[85%] items-center px-1">Select services</div>
         <div
-          className="flex h-[100%] w-[15%] items-center justify-center font-bold"
+          className="flex h-[100%] w-[15%] cursor-pointer items-center justify-center font-bold"
           onClick={handleFlippingArrow}
         >
           <img
@@ -73,9 +82,7 @@ export default function ServiceDropDown({
             {services.map((service) => (
               <li
                 className={
-                  transactionDetails.services.some(
-                    (s) => s.name === service.name,
-                  )
+                  selectedServices.some((s) => s.name === service.name)
                     ? "mx-1 my-1 border-b-[2px] border-customGreen01 bg-customGreen01 px-2 text-customBGColor"
                     : "mx-1 my-1 border-b-[2px] border-customGreen01 px-2"
                 }
@@ -87,7 +94,9 @@ export default function ServiceDropDown({
                   value={service.name}
                   id={service.name}
                   className="hidden"
-                  onChange={handleAddingServices}
+                  onChange={(event) => {
+                    handleAddingServices(event, service.price);
+                  }}
                 />
                 <label htmlFor={service.name} className="cursor-pointer">
                   {service.name}
@@ -100,3 +109,30 @@ export default function ServiceDropDown({
     </div>
   );
 }
+
+/* function handleAddingServices(event) {
+    const serviceName = event.target.value;
+    const selectedService = services.find(
+      (service) => service.name === serviceName,
+    );
+    setDetails((prevDetails) => {
+      const serviceExists = prevDetails.services.some(
+        (s) => s.name === serviceName,
+      );
+
+      return {
+        ...prevDetails,
+        services: serviceExists
+          ? prevDetails.services.filter((s) => s.name !== serviceName)
+          : [
+              ...prevDetails.services,
+              {
+                name: selectedService.name,
+                price: selectedService.price,
+                quantity: 1,
+                total: selectedService.price,
+              },
+            ],
+      };
+    });
+  } */

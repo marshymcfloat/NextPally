@@ -9,16 +9,35 @@ import CustomerSearchInput from "./CustomerSearchInput";
 import CashierSelectInput from "./CashierSelectInput";
 
 import { getCustomerSuggestions } from "@/lib/actions";
-import CashierTextInput from "./CashierTextInput";
+import VoucherInput from "./VoucherInput";
+import { useDispatch, useSelector } from "react-redux";
+import { transactionActions } from "@/components/Redux/TransactionSlice";
 
 export default function AddTransaction({
   visibility,
-  transactionDetails,
-  setDetails,
   branches,
   services,
   methods,
 }) {
+  const [transactionDetails, setDetails] = useState({
+    customerName: "",
+    streak: "",
+    streakDiscount: 0,
+    branch: "",
+    services: [],
+    voucher: "",
+    voucherDiscount: 0,
+    payment: "",
+    totalDiscount: 0,
+    total: 0,
+  });
+
+  const availedServices = useSelector(
+    (state) => state.transaction.selectedServices,
+  );
+
+  const dispatch = useDispatch();
+
   const dialogRef = useRef();
   const [availableServices, setAvailableServices] = useState([]);
 
@@ -29,33 +48,36 @@ export default function AddTransaction({
 
   function handleTransactionDetailsChanges(event) {
     const { name, value } = event.target;
-    console.log(transactionDetails);
     setDetails((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   }
 
-  function branchHandleChange(event) {
-    const { name, id, value } = event.target;
+  function handleBranchChange(event) {
+    const { value } = event.target;
     const foundServices = services.filter(
       (service) => service.branchID === value,
     );
-    setDetails((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    dispatch(transactionActions.branchChange(event.target.value));
+
     setAvailableServices(foundServices);
   }
 
-  function handleCustomerSearch(event) {
-    getCustomerSuggestions(event.target.value);
+  function handleMethodChange(event) {
+    const { value } = event.target;
+    dispatch(transactionActions.paymentMethodChange(value));
   }
 
   const totalAmount = transactionDetails.services.reduce(
     (acc, service) => acc + service.price * service.quantity,
     0,
   );
+
+  const totalDiscount =
+    transactionDetails.streakDiscount + transactionDetails.voucherDiscount;
+
+  const finalTotal = totalAmount - totalDiscount;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -77,12 +99,12 @@ export default function AddTransaction({
 
           <CustomerStreak />
 
-          <div className="my-2 flex justify-evenly">
+          <div className="mt-10 flex justify-evenly">
             <div className="w-[30%]">
               <CashierSelectInput
-                label={"branch"}
+                label={"Branch"}
                 data={branches}
-                fn={branchHandleChange}
+                fn={handleBranchChange}
               />
             </div>
             <div className="w-[60%]">
@@ -93,27 +115,27 @@ export default function AddTransaction({
               />
             </div>
           </div>
-          <div className="flex justify-evenly">
+          <div className="my-2 flex justify-evenly">
             <div className="w-[30%]">
-              <CashierTextInput label={"voucher"} />
+              <VoucherInput setDetails={setDetails} totalAmount={totalAmount} />
             </div>
             <div className="w-[60%]">
               <CashierSelectInput
-                label={"payment method"}
+                label={"Payment Method"}
                 data={methods}
-                fn={handleTransactionDetailsChanges}
+                fn={handleMethodChange}
               />
             </div>
           </div>
 
-          <div className="max-h-[40%] min-h-[40%] overflow-y-auto">
+          <div className="max-h-[40%] min-h-[40%]">
             <p>availed</p>
-            <div className="rounded-md bg-customBGlightGreen">
-              {transactionDetails.services.length === 0 && (
+            <div className="max-h-[200px] overflow-y-auto rounded-md bg-customBGlightGreen">
+              {availedServices.length === 0 && (
                 <h1 className="py-4 text-center">Please select services</h1>
               )}
-              {transactionDetails.services.length !== 0 &&
-                transactionDetails.services.map((service) => (
+              {availedServices.length !== 0 &&
+                availedServices.map((service) => (
                   <SelectedServices
                     key={service.name}
                     name={service.name}
@@ -133,11 +155,11 @@ export default function AddTransaction({
             </div>
             <div className="flex justify-between">
               <p>discount</p>
-              <p>-P100</p>
+              <p>P{totalDiscount}</p>
             </div>
             <div className="flex justify-between">
               <p>Total</p>
-              <p>P{totalAmount}</p>
+              <p>P{finalTotal}</p>
             </div>
           </div>
           <div className="mt-6 flex justify-evenly">

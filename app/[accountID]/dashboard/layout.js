@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import TanStackProvider from "@/components/TanstackProvider";
+import ReduxProvider from "@/components/Redux/ReduxProvider";
 import Head from "next/head";
 
 export default function DashBoardLayout({ children }) {
@@ -11,8 +12,10 @@ export default function DashBoardLayout({ children }) {
           rel="stylesheet"
         />
       </Head>
-      <body className="font-inter overflow-hidden bg-customBGColor">
-        <TanStackProvider>{children}</TanStackProvider>
+      <body className="overflow-hidden bg-customBGColor font-inter">
+        <ReduxProvider>
+          <TanStackProvider>{children}</TanStackProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
