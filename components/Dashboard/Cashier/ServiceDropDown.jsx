@@ -12,10 +12,6 @@ export default function ServiceDropDown({ services }) {
     (state) => state.transaction.selectedServices,
   );
 
-  console.log(services);
-
-  console.log(selectedServices);
-
   function handleFlippingArrow() {
     setIsArrowFlipped((prevState) => !prevState);
   }

@@ -1,18 +1,19 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { debounce } from "lodash";
-import { useDispatch } from "react-redux";
-import { useMutation } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
 import { transactionActions } from "@/components/Redux/TransactionSlice";
 
-export default function VoucherInput({ setDetails, totalAmount }) {
+export default function VoucherInput({ setDetails }) {
   const dispatch = useDispatch();
   const { accountID } = useParams();
+  const [voucherCode, setVoucherCode] = useState(""); // State to track the last entered voucher
   const [found, setFound] = useState(false);
-  const [discountAmount, setDiscountAmount] = useState(0);
   const [voucherError, setVoucherError] = useState("");
+
+  const subTotal = useSelector((state) => state.transaction.subTotal);
 
   async function fetchVoucher(voucher) {
     try {
@@ -23,45 +24,56 @@ export default function VoucherInput({ setDetails, totalAmount }) {
         throw new Error("There is an error fetching voucher code");
       }
       const resData = await response.json();
-      if (resData.status === "found") {
-        if (resData.minimumAmount < totalAmount) {
-          dispatch(transactionActions.voucherChange(resData.code));
-          dispatch(transactionActions.setVoucherDiscount(resData.value));
-        } else if (resData.minimumAmount > totalAmount) {
-          setVoucherError("required amount: " + resData.minimumAmount);
-        }
-      } else {
-        setDiscountAmount(0);
-        setFound(false);
-        setDetails((prevState) => ({
-          ...prevState,
-          voucher: "",
-          voucherDiscount: 0,
-        }));
-        setVoucherError("");
-      }
+      return resData;
     } catch (error) {
-      console.log(error);
-      setDiscountAmount(0);
-      setFound(false);
+      console.error(error);
+      return null;
     }
   }
 
-  const handleVoucherSearching = debounce((value) => {
+  const handleVoucherSearching = debounce(async (value) => {
     if (value.trim()) {
-      fetchVoucher(value);
+      const resData = await fetchVoucher(value);
+      if (resData) {
+        if (resData.status === "found") {
+          setFound(true);
+          setVoucherError("");
+          if (resData.minimumAmount <= subTotal) {
+            dispatch(transactionActions.voucherChange(resData.code));
+            dispatch(transactionActions.setVoucherDiscount(resData.value));
+          } else {
+            setVoucherError("Required amount: " + resData.minimumAmount);
+            dispatch(transactionActions.voucherChange(""));
+            dispatch(transactionActions.setVoucherDiscount(0));
+          }
+        } else {
+          setFound(false);
+          dispatch(transactionActions.voucherChange(""));
+          dispatch(transactionActions.setVoucherDiscount(0));
+          setVoucherError("");
+        }
+      }
     }
   }, 800);
 
   function handleVoucherInput(event) {
     const value = event.target.value.toUpperCase();
-    handleVoucherSearching(value);
+    setVoucherCode(value);
+    if (value.trim() === "") {
+      dispatch(transactionActions.voucherChange(""));
+      dispatch(transactionActions.setVoucherDiscount(0));
+      setFound(false);
+      setVoucherError("");
+    } else {
+      handleVoucherSearching(value);
+    }
   }
 
-  const { mutate, isError } = useMutation({
-    mutationKey: "voucher",
-    mutationFn: fetchVoucher,
-  });
+  useEffect(() => {
+    if (voucherCode) {
+      handleVoucherSearching(voucherCode);
+    }
+  }, [subTotal, voucherCode]);
 
   return (
     <div className="flex flex-col">
@@ -76,6 +88,7 @@ export default function VoucherInput({ setDetails, totalAmount }) {
             : "max-w-[100px] rounded-md border-[3px] border-customGreen01 px-2 py-1 text-red-500"
         }
         name="voucher"
+        value={voucherCode}
         onChange={handleVoucherInput}
         style={{ textTransform: "uppercase" }}
       />

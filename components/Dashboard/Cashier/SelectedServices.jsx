@@ -1,32 +1,24 @@
-export default function SelectedServices({
-  quantity,
-  name,
-  value,
-  setDetails,
-}) {
+"use client";
+
+import { transactionActions } from "@/components/Redux/TransactionSlice";
+import { useSelector, useDispatch } from "react-redux";
+
+export default function SelectedServices({ name, value, setDetails }) {
+  const dispatch = useDispatch();
+
+  const transactionDetails = useSelector((state) => state.transaction);
+
+  const quantity = useSelector((state) => {
+    const services = state.transaction.selectedServices;
+
+    const serviceQuantity = services.find((service) => service.name === name);
+    return serviceQuantity.quantity;
+  });
+
   const total = quantity * value;
 
-  function handleQuantityChange(identifier) {
-    setDetails((prevState) => {
-      const newServices = prevState.services
-        .map((service) =>
-          service.name === name
-            ? {
-                ...service,
-                quantity:
-                  identifier === "inc"
-                    ? service.quantity + 1
-                    : service.quantity - 1,
-              }
-            : service,
-        )
-        .filter((service) => service.quantity > 0);
-
-      return {
-        ...prevState,
-        services: newServices,
-      };
-    });
+  function handleQuantityChange(identifier, name) {
+    dispatch(transactionActions.modifyServiceQuantity({ identifier, name }));
   }
 
   return (
@@ -47,14 +39,14 @@ export default function SelectedServices({
           <button
             type="button"
             className="flex h-[25px] w-[25px] items-center justify-center rounded-md border-[2px] border-customGreen01"
-            onClick={() => handleQuantityChange("dec")}
+            onClick={() => handleQuantityChange("dec", name)}
           >
             -
           </button>
           <button
             type="button"
             className="flex h-[25px] w-[25px] items-center justify-center rounded-md border-[2px] border-customGreen01 bg-customGreen01 text-customBGColor"
-            onClick={() => handleQuantityChange("inc")}
+            onClick={() => handleQuantityChange("inc", name)}
           >
             +
           </button>
@@ -64,3 +56,26 @@ export default function SelectedServices({
     </div>
   );
 }
+
+/* function handleQuantityChange(identifier) {
+    setDetails((prevState) => {
+      const newServices = prevState.services
+        .map((service) =>
+          service.name === name
+            ? {
+                ...service,
+                quantity:
+                  identifier === "inc"
+                    ? service.quantity + 1
+                    : service.quantity - 1,
+              }
+            : service,
+        )
+        .filter((service) => service.quantity > 0);
+
+      return {
+        ...prevState,
+        services: newServices,
+      };
+    });
+  } */

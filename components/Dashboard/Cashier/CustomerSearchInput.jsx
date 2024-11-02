@@ -9,6 +9,13 @@ import { useMutation } from "@tanstack/react-query";
 import Spinner from "@/components/Indicators/Spinner";
 
 export default function CustomerSearchInput() {
+  const streakEquivalent = [
+    { streak: "0", value: 0 },
+    { streak: "1", value: 50 },
+    { streak: "2", value: 75 },
+    { streak: "3", value: 100 },
+  ];
+
   const [customerSuggestions, setCustomerSuggestions] = useState([]);
   const { accountID } = useParams();
   const suggestionRef = useRef(null);
@@ -49,15 +56,23 @@ export default function CustomerSearchInput() {
     const inputValue = event.target.value;
     debouncedFetch(inputValue);
     dispatch(transactionActions.nameInputChange(inputValue));
+    dispatch(transactionActions.streakChange(0));
+    dispatch(transactionActions.setStreakDiscount(0));
   }
 
   function handleSelectingSuggestion(event) {
     const selectedSuggestion = customerSuggestions.find(
       (element) => element.name === event.target.innerHTML,
     );
+
     if (selectedSuggestion) {
+      const streakEquivalentValue = streakEquivalent.find(
+        (streak) => streak.streak === selectedSuggestion.streak,
+      ).value;
+
       dispatch(transactionActions.nameInputChange(selectedSuggestion.name));
       dispatch(transactionActions.streakChange(selectedSuggestion.streak));
+      dispatch(transactionActions.setStreakDiscount(streakEquivalentValue));
       setCustomerSuggestions([]);
     }
   }
@@ -79,6 +94,8 @@ export default function CustomerSearchInput() {
         className="h-[50px] rounded-md border-[3px] border-customGreen01 px-2"
         onChange={handleInputChange}
         value={customerName}
+        placeholder="e.g., Ellaine Canoy"
+        required
       />
       {isLoading && <Spinner />} {/* Show spinner while loading */}
       {isError && <p className="text-red-500">{error.message}</p>}{" "}
