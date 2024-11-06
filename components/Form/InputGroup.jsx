@@ -1,5 +1,5 @@
 "use client";
-export default function InputGroup({ label, type = "text" }) {
+export default function InputGroup({ label, type = "text", ...props }) {
   return (
     <div className="mx-auto my-4 flex w-[80%] flex-col">
       <label
@@ -9,6 +9,7 @@ export default function InputGroup({ label, type = "text" }) {
         {label}:
       </label>
       <input
+        {...props}
         type={type}
         id={label}
         name={label}

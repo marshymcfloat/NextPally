@@ -37,7 +37,10 @@ export async function GET(req, { params }) {
         branches.map((branch) => Service.find({ branchID: branch._id })),
       );
       const methods = await PaymentMethod.find({});
-      data = { role: foundAcc.role, branches, services, methods };
+
+      const transactions = await Transaction.find({ transactBy: accountID });
+
+      data = { role: foundAcc.role, branches, services, methods, transactions };
     } else if (searchTerm) {
       const foundCustomers = await Customer.find(
         { name: { $regex: `^${searchTerm}`, $options: "i" } },
@@ -62,7 +65,11 @@ export async function GET(req, { params }) {
   return new Response(JSON.stringify(data), { status: 200 });
 }
 
-export async function POST(req) {
+export async function POST(req, { params }) {
+  const { accountID } = params;
+
+  const { businessID } = await Account.findOne({ _id: accountID });
+
   const data = await req.json();
 
   const {
@@ -85,7 +92,7 @@ export async function POST(req) {
 
   const jsonResponseHeaders = { "Content-Type": "application/json" };
 
-  const voucherID = await Voucher.findOne({ voucherCode: voucher });
+  const foundVoucher = await Voucher.findOne({ voucherCode: voucher });
 
   const selectedServicesID = await Promise.all(
     selectedServices.map(async (service) => {
@@ -110,11 +117,8 @@ export async function POST(req) {
 
   function isNameValid(name) {
     const modifiedName = capitalizeName(name);
-    console.log(modifiedName);
     const trimmedName = modifiedName.trim();
-    console.log(trimmedName);
     const validNamePattern = /^[A-Za-z\s]+$/;
-    console.log(trimmedName.length > 5 && validNamePattern.test(trimmedName));
     return trimmedName.length > 5 && validNamePattern.test(trimmedName);
   }
 
@@ -135,12 +139,16 @@ export async function POST(req) {
   }
 
   async function createNewTransaction() {
+    const capitalizedName = capitalizeName(name);
+
     const newTransaction = new Transaction({
-      name,
+      transactBy: accountID,
+      businessID,
+      name: capitalizedName,
       streak,
       streakDiscount,
-      voucher: voucherID,
-      voucherDiscount,
+      voucher: foundVoucher?._id || null,
+      voucherDiscount: foundVoucher?.voucherDiscount || 0,
       branch,
       selectedServices: selectedServicesID,
       paymentMethod: method,
@@ -238,6 +246,18 @@ export async function POST(req) {
   }
 
   if (!(await isCustomerExisting())) {
+    const { businessID } = await Account.findOne({ _id: accountID });
+    const capitalizedName = capitalizeName(name);
+
+    const newCustomer = await new Customer({
+      name: capitalizedName,
+      streak: streak + 1,
+      businessID,
+      availedHistory: [{ totalPaid: grandTotal }],
+    });
+
+    newCustomer.save();
+
     createNewTransaction();
     return new Response(JSON.stringify({ status: "successful" }), {
       status: 200,

@@ -7,10 +7,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(undefined);
+  const router = useRouter();
 
   async function validateLogin(formObject) {
+    setIsSubmitting(true);
+    setError(undefined); // Clear previous errors
     try {
       const response = await fetch("/api/login", {
         method: "POST",
@@ -22,11 +25,21 @@ export default function LoginPage() {
 
       if (!response.ok) {
         setError(resData.message);
-        return;
+        throw new Error(resData.message);
       }
-      router.push(`/${resData.userID}/dashboard`);
+
+      console.log(resData);
+      if (resData.role === "cashier") {
+        console.log("meow");
+        router.push(`/${resData.userID}/home`);
+        setIsSubmitting(false);
+      }
     } catch (error) {
-      setError("Something went wrong. Please try again later.");
+      setError(
+        error.message || "Something went wrong. Please try again later.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -39,7 +52,9 @@ export default function LoginPage() {
           )}
           <InputGroup label="username" />
           <InputGroup label="password" type="password" />
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "wait..." : "Login"}
+          </Button>
         </Form>
       </div>
     </main>

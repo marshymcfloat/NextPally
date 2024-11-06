@@ -1,13 +1,20 @@
 import Account from "@/lib/models/Account";
+import Role from "@/lib/models/Role";
 import bcrypt from "bcrypt";
 
 export async function POST(req) {
   try {
     const body = await req.json();
+
+    console.log(body);
     const { username, password } = body;
-    const foundAcc = await Account.findOne({ username });
+
     console.log(username);
+    console.log(password);
+
+    const foundAcc = await Account.findOne({ username }).populate("role");
     console.log(foundAcc);
+
     if (!foundAcc) {
       return new Response(
         JSON.stringify({
@@ -26,10 +33,12 @@ export async function POST(req) {
         { status: 401, headers: { "Content-Type": "application/json" } },
       );
     }
+
     return new Response(
       JSON.stringify({
         message: "Login successful.",
         userID: foundAcc._id.toString(),
+        role: foundAcc.role.title,
       }),
       {
         status: 200,

@@ -251,6 +251,8 @@ export default function Dashboard({ params }) {
         services={data.services}
         branches={data.branches}
         methods={data.methods}
+        accountID={accountID}
+        transactions={data.transactions}
       />
     );
   } else if (data?.role.title === "worker") {

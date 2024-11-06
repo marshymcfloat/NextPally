@@ -5,7 +5,17 @@ import SideBar from "../SideBar/SideBar";
 import { useState } from "react";
 import AddTransaction from "./AddTransaction";
 
-export default function CashierDashBoard({ services, branches, methods }) {
+export default function CashierDashBoard({
+  services,
+  branches,
+  methods,
+  accountID,
+  transactions,
+}) {
+  console.log(transactions);
+
+  const [dialogVisibility, setDialogVisibility] = useState(false);
+
   const availableServices = services.flat();
   const availableBranches = branches;
   const availableMethods = methods;
@@ -26,8 +36,6 @@ export default function CashierDashBoard({ services, branches, methods }) {
       status: "ongoing",
     },
   ]);
-
-  const [dialogVisibility, setDialogVisibility] = useState(false);
 
   function handleDialogVisibility() {
     setDialogVisibility((prevState) => !prevState);
@@ -75,31 +83,40 @@ export default function CashierDashBoard({ services, branches, methods }) {
 
             <div className="text-customGreen01">
               <ul>
-                {list &&
-                  list.map((transaction, index) => (
-                    <li key={transaction.id}>
-                      <div
-                        className={
-                          index & (2 === 0) || index === 0
-                            ? "mx-1 my-1 flex justify-around border-[3px] border-customGreen01 bg-customGreen01 text-customBGColor"
-                            : "mx-1 my-1 flex justify-around border-[3px] border-customGreen01 bg-customBGColor"
-                        }
-                      >
-                        <div className="w-[150px]">
-                          <p>{transaction.name}</p>
+                {transactions.length !== 0 ? (
+                  transactions.map((transaction, index) => {
+                    return (
+                      <li key={transaction._id}>
+                        <div
+                          className={
+                            index % 2 === 0 || index === 0
+                              ? "mx-1 my-1 flex justify-around border-[3px] border-customGreen01 bg-customGreen01 text-customBGColor"
+                              : "mx-1 my-1 flex justify-around border-[3px] border-customGreen01 bg-customBGColor"
+                          }
+                        >
+                          <div className="w-[150px]">
+                            <p className="max-w-[150px] truncate">
+                              {transaction.name}
+                            </p>
+                          </div>
+                          <div>
+                            <p>{transaction.date}</p>{" "}
+                          </div>
+                          <div>
+                            <p>{transaction.time}</p>{" "}
+                          </div>
+                          <div className="w-[70px] text-center">
+                            <p>{transaction.status}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p>{transaction.date}</p>
-                        </div>
-                        <div>
-                          <p>{transaction.time}</p>
-                        </div>
-                        <div className="w-[70px] text-center">
-                          <p>{transaction.status}</p>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })
+                ) : (
+                  <p className="my-16 h-full px-8 text-center text-2xl uppercase">
+                    no transactions yet. (this should be fixed)
+                  </p>
+                )}
               </ul>
             </div>
           </div>

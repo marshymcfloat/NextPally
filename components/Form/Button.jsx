@@ -2,6 +2,7 @@ export default function Button({
   invert = false,
   children,
   disabled,
+  isSubmitting,
   ...props
 }) {
   const style = invert
